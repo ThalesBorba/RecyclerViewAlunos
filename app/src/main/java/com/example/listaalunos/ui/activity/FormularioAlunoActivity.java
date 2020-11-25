@@ -36,9 +36,9 @@ public class FormularioAlunoActivity extends AppCompatActivity {
         salvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Aluno alunoCriado = criaAluno();
+                Aluno alunoCriado = criaAluno();
                 //Recebe os EditText e transforma em Strings
-                //salva(alunoCriado);
+                salva(alunoCriado);
                 //Usa o metodo do AlunoDAO para salvar o aluno na lista "original"
             }
         });
