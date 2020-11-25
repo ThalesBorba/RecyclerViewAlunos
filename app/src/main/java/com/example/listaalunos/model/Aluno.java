@@ -18,6 +18,7 @@ public class Aluno implements Serializable {
         this.email = email;
     }
 
+
     public String getNome() {
         return nome;
     }
