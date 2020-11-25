@@ -4,18 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.listaalunos.R;
 import com.example.listaalunos.dao.AlunoDAO;
 import com.example.listaalunos.model.Aluno;
 
 import java.util.List;
+
+import static com.example.listaalunos.ui.activity.ConstantesActivity.CHAVE_ALUNO;
 
 public class ListaAlunosActivity extends AppCompatActivity {
 
@@ -37,46 +37,51 @@ public class ListaAlunosActivity extends AppCompatActivity {
         botaoNovoAluno.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                abreFormularioAlunoActivity();
+                abreFormularioModoInsereAluno();
             }
         });
     }
 
-    private void abreFormularioAlunoActivity() {
-        //mostra de qual activity a informação veio e para onde vai
+    private void abreFormularioModoInsereAluno() {
         startActivity(new Intent(this, FormularioAlunoActivity.class));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         configuraLista();
-
     }
 
     private void configuraLista() {
         ListView listaDeAlunos = findViewById(R.id.listaAlunos);
         final List<Aluno> alunos = dao.todos();
-        //variável para que o onItemClick posso ter acesso direto à lista
-        listaDeAlunos.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, alunos));
-        //atualiza a lista com as alterações
+        configuraAdapter(listaDeAlunos, alunos);
+        configuraListenerDeCliquePorItem(listaDeAlunos);
+
+    }
+
+    private void configuraListenerDeCliquePorItem(ListView listaDeAlunos) {
         listaDeAlunos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int posicao, long id) {
-                /*Log.i("posicao do aluno", "" + posicao);
-                Deixa você ver no logcat o que acontece quando vc clica no "listaDeAlunos"*/
-                Aluno alunoEscolhido = alunos.get(posicao);
-                Intent vaiParaFormularioActivitty = new Intent(
-                        ListaAlunosActivity.this, FormularioAlunoActivity.class);
-                vaiParaFormularioActivitty.putExtra("aluno", alunoEscolhido);
-                /*obs.: como Aluno não é um valor primitivo, precisa implementar "serializable"
-                para ser transferido através do putExtra*/
-                startActivity(vaiParaFormularioActivitty);
+                Aluno alunoEscolhido = (Aluno) adapterView.getItemAtPosition(posicao);
+                abreFormularioModoEditaAluno(alunoEscolhido);
 
             }
         });
+    }
 
+    private void abreFormularioModoEditaAluno(Aluno aluno) {
+        Intent vaiParaFormularioActivitty = new Intent(
+                ListaAlunosActivity.this, FormularioAlunoActivity.class);
+        vaiParaFormularioActivitty.putExtra(CHAVE_ALUNO, aluno);
+                /*obs.: como Aluno não é um valor primitivo, precisa implementar "serializable"
+                para ser transferido através do putExtra*/
+        startActivity(vaiParaFormularioActivitty);
+    }
+
+    private void configuraAdapter(ListView listaDeAlunos, List<Aluno> alunos) {
+        listaDeAlunos.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, alunos));
     }
 }
